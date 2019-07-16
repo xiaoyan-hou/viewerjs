@@ -38,6 +38,7 @@ import {
   removeListener,
   setStyle,
   toggleClass,
+  isString,
 } from './utilities';
 
 export default {
@@ -182,6 +183,15 @@ export default {
       this.hidden();
     }
 
+    // modal-inline 模式 隐藏 container
+    if (this.options.modalInline) {
+      let modalContainer = this.options.container;
+      if (isString(modalContainer)) {
+        modalContainer = element.ownerDocument.querySelector(modalContainer);
+      }
+      addClass(modalContainer, CLASS_INVISIBLE);
+    }
+
     return this;
   },
 
@@ -250,6 +260,11 @@ export default {
 
     canvas.innerHTML = '';
     canvas.appendChild(image);
+
+    // modal-inline 模式处理 modalcontainers
+    if (options.modalInline) {
+      this.handleModalContainer();
+    }
 
     // Center current item
     this.renderList();
@@ -991,7 +1006,7 @@ export default {
 
       this.ready = false;
       this.viewer.parentNode.removeChild(this.viewer);
-    } else if (options.inline) {
+    } else if (options.inline || options.modalInline) { // 移除 init 时 绑定的定时器
       if (this.delaying) {
         this.delaying.abort();
       } else if (this.initializing) {
@@ -1005,5 +1020,39 @@ export default {
 
     element[NAMESPACE] = undefined;
     return this;
+  },
+
+  handleModalContainer() {
+    this.rootEle = document.getElementById(this.options.rootId);
+    const rootRect = this.rootEle.getBoundingClientRect();
+
+    this.originalImageElements = this.options.imageElements;
+    const currentImg = document.getElementById(this.originalImageElements[this.index]);
+
+    const elementRect = currentImg.getBoundingClientRect();
+
+    const diffTop = elementRect.top - rootRect.top;
+    const difflLeft = elementRect.left - rootRect.left;
+
+    let { container } = this.options;
+    const { element } = this;
+    if (isString(container)) {
+      container = element.ownerDocument.querySelector(container);
+    }
+
+    if (!container) {
+      container = this.body;
+      console.error('请指定container');
+    }
+
+    // 移除 container 的隐藏
+    removeClass(container, CLASS_INVISIBLE);
+    setStyle(container, {
+      left: difflLeft,
+      top: diffTop,
+    });
+
+    // 隐藏原图
+    // addClass(currentImg, CLASS_INVISIBLE);
   },
 };

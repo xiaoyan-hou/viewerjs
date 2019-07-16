@@ -182,6 +182,17 @@ export default {
   url: 'src',
 
   /**
+   * Enable modal-inline mode.
+   * viewer-container 不添加 .viewer-fixed 类名，固定在指定父元素区域内
+   * @type {boolean}
+   */
+  modalInline: false,
+  /**
+   * Define where to put the viewers in modal-inline mode.
+   * @type {String | Element}
+   */
+  rootId: '',
+  /**
    * Event shortcuts.
    * @type {Function}
    */

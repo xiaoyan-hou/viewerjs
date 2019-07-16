@@ -42,6 +42,11 @@ export default {
     this.bind();
     this.showing = false;
 
+    // modal-inline fulled = false
+    if (options.modalInline) {
+      this.fulled = false;
+    }
+
     if (isFunction(options.shown)) {
       addListener(element, EVENT_SHOWN, options.shown, {
         once: true,

@@ -38,7 +38,7 @@ export default {
   },
 
   initViewer() {
-    const { options, parent } = this;
+    const { options, parent, element } = this;
     let viewerData;
 
     if (options.inline) {
@@ -49,6 +49,27 @@ export default {
 
       this.parentData = viewerData;
     }
+
+    // modal-inline 模式 start
+    if (options.modalInline) {
+      let modalContainer = options.container;
+
+      if (isString(modalContainer)) {
+        modalContainer = element.ownerDocument.querySelector(modalContainer);
+      }
+
+      if (!modalContainer) {
+        console.error('modal inline模式必选提供container');
+      }
+
+      viewerData = {
+        width: Math.max(modalContainer.offsetWidth, options.minWidth),
+        height: Math.max(modalContainer.offsetHeight, options.minHeight),
+      };
+
+      this.parentData = viewerData;
+    }
+    //  modal-inline 模式 end
 
     if (this.fulled || !viewerData) {
       viewerData = this.containerData;

@@ -20,6 +20,7 @@ import {
   NAMESPACE,
   REGEXP_SPACES,
   WINDOW,
+  CLASS_BACKGROUND_WHITE,
 } from './constants';
 import {
   addClass,
@@ -117,7 +118,8 @@ class Viewer {
       options.transition = false;
     }
 
-    if (options.inline) {
+    // 当模式为 inline 和 modalinline 的时候 自动处于可放大状态
+    if (options.inline || options.modalInline) {
       let count = 0;
       const progress = () => {
         count += 1;
@@ -300,6 +302,36 @@ class Viewer {
       }
 
       parent.insertBefore(viewer, element.nextSibling);
+    } else if (options.modalInline) {
+      // modal-inline 模式
+      // 不要 右上角 关闭按钮
+      addClass(button, CLASS_INVISIBLE);
+
+      addClass(viewer, CLASS_FADE);
+      addClass(viewer, CLASS_HIDE);
+      addClass(viewer, CLASS_BACKGROUND_WHITE);
+      setStyle(viewer, {
+        zIndex: options.zIndex,
+      });
+
+      let { container } = options;
+      if (isString(container)) {
+        container = element.ownerDocument.querySelector(container);
+      }
+
+      if (!container) {
+        container = this.body;
+      }
+
+      const ele = document.getElementById(this.options.imageElements[this.index]);
+      const currentStyle = window.getComputedStyle(ele);
+      setStyle(container, {
+        width: currentStyle.width,
+        height: currentStyle.height,
+        top: 0,
+        left: 0,
+      });
+      container.appendChild(viewer);
     } else {
       addClass(button, CLASS_CLOSE);
       addClass(viewer, CLASS_FIXED);
@@ -343,6 +375,11 @@ class Viewer {
     }
 
     if (this.ready && options.inline) {
+      this.view(this.index);
+    }
+
+    // modal-inline 模式也需要自启动
+    if (this.ready && options.modalInline) {
       this.view(this.index);
     }
   }

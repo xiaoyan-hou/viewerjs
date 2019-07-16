@@ -27,6 +27,8 @@ export const CLASS_MOVE = `${NAMESPACE}-move`;
 export const CLASS_OPEN = `${NAMESPACE}-open`;
 export const CLASS_SHOW = `${NAMESPACE}-show`;
 export const CLASS_TRANSITION = `${NAMESPACE}-transition`;
+export const CLASS_BACKGROUND_WHITE = `${NAMESPACE}-background-white`;
+
 
 // Events
 export const EVENT_CLICK = 'click';
